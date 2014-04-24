@@ -36,9 +36,10 @@ branch = ref_changes[0]['refId']
 sha = ref_changes[0]['toHash']
 
 #write out job name hash and branch and validate they don't exist before triggering
-file = File.join('/tmp', 'jenkins_trigger', job_name, "#{sha}-#{branch}")
+file = File.join('/tmp', 'jenkins_trigger', job_name, "#{sha}-#{branch}".gsub('/', '_'))
 FileUtils.mkdir_p(File.dirname(file))
-exit if File.exists?(file)
+#You may want to rebuild an old commit if you RESET HEAD^
+#exit if File.exists?(file)
 File.write(file, '0')
 
 #Trigger Jenkins here
