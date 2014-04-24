@@ -15,8 +15,7 @@ puts "Accept: application/json\r\n\r\n"
 cgi = CGI.new
 query_string = CGI.parse(cgi.query_string)
 job_name = query_string['JOB_NAME'][0]
-hash = cgi.params
-json = JSON::parse(hash.keys[0])
+json = JSON::parse(cgi.params.keys[0])
 
 success = false
 begin
@@ -65,7 +64,7 @@ while Time.now < stop_at
   response = http.request(request)
   puts "Jenkins job update response: #{response.code} #{response.body}"
   
-  break if response.code == '201'
+  break if ['201', '302'].include?(response.code)
   sleep 15
 
 end
