@@ -1,6 +1,18 @@
-Jenkins-Stash-CGI-Trigger
-=========================
+# Stash Http Request Trigger
 
-List for stash post recieve web requsts and then trigger jenkins.
+After making commits to Stash, notify make a Http GET request to a specified URL.
 
-(Meant for use with: https://marketplace.atlassian.com/plugins/com.atlassian.stash.plugin.stash-web-post-receive-hooks-plugin)
+## Setup
+
+Once installed, follow these steps:
+-  Navigate to a repository in Stash.
+-  Hit the *Settings* link
+-  In the left-navigation, hit the *Hooks* link
+-  For the **Stash Http Request Trigger**, click the *Enable* button.
+-  Enter a URL
+
+## Development
+##Run
+mvn -DdownloadSources=true eclipse:eclipse
+
+Copy this: https://bitbucket.org/atlassian/stash-webhook-plugin/src

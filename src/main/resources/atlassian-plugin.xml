@@ -1,0 +1,18 @@
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+    </plugin-info>
+
+    <component-import key="nav-builder" interface="com.atlassian.stash.nav.NavBuilder"/>
+
+    <repository-hook key="postReceiveHook" name="PostReceiveHook" class="com.zerosumtech.wparad.stash.PostReceiveHook">
+        <description>Webhook for notifying a configured endpoint of changes to this repository.</description>
+        <config-form>
+            <view>com.zerosumtech.wparad.stash.formContents</view>
+            <directory location="/static/"/>
+        </config-form>
+    </repository-hook>
+
+</atlassian-plugin>
