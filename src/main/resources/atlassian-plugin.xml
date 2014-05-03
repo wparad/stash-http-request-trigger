@@ -5,11 +5,9 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}"/>
     </plugin-info>
 
-    <component-import key="nav-builder" interface="com.atlassian.stash.nav.NavBuilder"/>
-
     <repository-hook key="postReceiveHook" name="PostReceiveHook" class="com.zerosumtech.wparad.stash.PostReceiveHook">
         <description>Webhook for notifying a configured endpoint of changes to this repository.</description>
-        <config-form>
+        <config-form name="Url Config" key="url-config">
             <view>com.zerosumtech.wparad.stash.formContents</view>
             <directory location="/static/"/>
         </config-form>

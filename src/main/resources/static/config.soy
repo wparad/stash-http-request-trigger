@@ -9,9 +9,9 @@
         {param id: 'url' /}
         {param value: $config['url'] /}
         {param labelContent}
-            {stash_i18n('stash.web.test.hook.config.label', 'URL')}
+            {stash_i18n('com.zerosumtech.wparad.stash.config.label', 'URL')}
         {/param}
-        {param descriptionText: stash_i18n('stash.web.test.hook.config.description', 'A URL to be notified') /}
+        {param descriptionText: stash_i18n('com.zerosumtech.wparad.stash.config.description', 'A URL to be notified') /}
         {param extraClasses: 'long' /}
         {param errorTexts: $errors ? $errors['url'] : null /}
     {/call}

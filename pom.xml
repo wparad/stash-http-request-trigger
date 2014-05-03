@@ -19,7 +19,38 @@
 
     <name>Stash Post Recieve Web Publish</name>
     <description>A post-receive/merge webhook that fires a POST on a remote URL.</description>
-    <packaging>atlassian-plugin</packaging>
+ 	<!-- <packaging>atlassian-plugin</packaging> -->
+
+   <repositories>
+	 <repository>
+	   <id>atlassian-public</id>
+	   <url>https://maven.atlassian.com/repository/public</url>
+	   <snapshots>
+		 <enabled>true</enabled>
+		 <updatePolicy>never</updatePolicy>
+		 <checksumPolicy>warn</checksumPolicy>
+	   </snapshots>
+	   <releases>
+		 <enabled>true</enabled>
+		 <checksumPolicy>warn</checksumPolicy>
+	   </releases>
+	 </repository>
+   </repositories>
+  
+   <pluginRepositories>
+	 <pluginRepository>
+	   <id>atlassian-public</id>
+	   <url>https://maven.atlassian.com/repository/public</url>
+	   <releases>
+		 <enabled>true</enabled>
+		 <checksumPolicy>warn</checksumPolicy>
+	   </releases>
+	   <snapshots>
+		 <updatePolicy>never</updatePolicy>
+		 <checksumPolicy>warn</checksumPolicy>
+	   </snapshots>
+	 </pluginRepository>
+   </pluginRepositories>
 
     <dependencies>
         <dependency>
@@ -41,7 +72,7 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
+<!-- 
     <build>
         <plugins>
             <plugin>
@@ -73,7 +104,7 @@
                 <version>0.7.1</version>
             </plugin>
         </plugins>
-    </build>
+    </build> -->
 
     <properties>
         <stash.version>2.3.0</stash.version>
