@@ -15,3 +15,5 @@ Once installed, follow these steps:
 ##Development
 ###Run
 mvn -DdownloadSources=true eclipse:eclipse
+###Compile
+mvn compile
