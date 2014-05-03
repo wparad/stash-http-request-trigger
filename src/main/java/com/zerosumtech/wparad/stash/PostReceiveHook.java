@@ -81,7 +81,14 @@ public class PostReceiveHook implements AsyncPostReceiveRepositoryHook, Reposito
     	Settings settings = repositoryHookService.getSettings(repository, PLUGIN_KEY + ":" + HOOK_KEY);
     	String baseUrl = settings.getString("url");
         String urlParams = "STASH_REF=" + urlEncode(ref) + "&STASH_SHA=" + urlEncode(sha);
-
+        
+        //If the url already includes query parameters then append them
+        int index = baseUrl.indexOf("?");
+        if(index != -1)
+        {
+        	urlParams.concat("&" + baseUrl.substring(index + 1));
+        	baseUrl = baseUrl.substring(0, index);
+        }
         post(baseUrl, urlParams);
     }
 
