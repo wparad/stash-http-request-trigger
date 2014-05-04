@@ -21,4 +21,4 @@ Once installed, follow these steps:
 ###Run
 mvn -DdownloadSources=true eclipse:eclipse
 ###Compile
-mvn compile
+mvn clean compile assembly:single

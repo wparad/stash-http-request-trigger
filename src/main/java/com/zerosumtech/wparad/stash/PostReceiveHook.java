@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 public class PostReceiveHook implements AsyncPostReceiveRepositoryHook, RepositorySettingsValidator 
 {
-	private static final String PLUGIN_KEY = "com.zerosumtech.wparad.stash-stash-http-request-trigger";
+	private static final String PLUGIN_KEY = "com.zerosumtech.wparad.stash.stash-http-request-trigger";
 	private static final String HOOK_KEY = "postReceiveHook";
     private static final Logger log = LoggerFactory.getLogger(PostReceiveHook.class);
     private final PermissionValidationService permissionValidationService;
