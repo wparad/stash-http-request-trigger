@@ -4,7 +4,7 @@
 
 	<groupId>com.zerosumtech.wparad.stash</groupId>
 	<artifactId>stash-http-request-trigger</artifactId>
-	<version>1.1.0</version>
+	<version>1.3.1</version>
 
     <scm>
         <connection>scm:git:ssh://git@github.com:wparad/stash-http-request-trigger.git</connection>
@@ -17,7 +17,7 @@
         <url>http://www.zerosumtech.com/</url>
     </organization>
 
-    <name>Stash Post Recieve Web Publish</name>
+    <name>Http Request Trigger</name>
     <description>A post-receive/merge webhook that fires a POST on a remote URL.</description>
  	<packaging>atlassian-plugin</packaging>
 

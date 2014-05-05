@@ -11,7 +11,7 @@
         {param labelContent}
             {stash_i18n('com.zerosumtech.wparad.stash.config.label', 'URL')}
         {/param}
-        {param descriptionText: stash_i18n('com.zerosumtech.wparad.stash.config.description', 'A URL to be notified') /}
+        {param descriptionText: stash_i18n('com.zerosumtech.wparad.stash.config.description', 'Specify a URL here.  An http POST request will be sent on pull-requests and ref changes to the repository.') /}
         {param extraClasses: 'long' /}
         {param errorTexts: $errors ? $errors['url'] : null /}
     {/call}

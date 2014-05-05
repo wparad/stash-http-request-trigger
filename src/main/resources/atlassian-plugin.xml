@@ -5,8 +5,8 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}"/>
     </plugin-info>
 
-    <repository-hook key="postReceiveHook" name="PostReceiveHook" class="com.zerosumtech.wparad.stash.PostReceiveHook">
-        <description>Webhook for notifying a configured endpoint of changes to this repository.</description>
+    <repository-hook key="postReceiveHook" name="${project.name} ${project.version}" class="com.zerosumtech.wparad.stash.PostReceiveHook">
+        <description>Sends http requests to a specified url.</description>
         <config-form name="Url Config" key="url-config">
             <view>com.zerosumtech.wparad.stash.formContents</view>
             <directory location="/static/"/>

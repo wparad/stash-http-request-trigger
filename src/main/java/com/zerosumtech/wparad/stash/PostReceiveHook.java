@@ -9,7 +9,6 @@ import com.atlassian.stash.hook.repository.AsyncPostReceiveRepositoryHook;
 import com.atlassian.stash.hook.repository.RepositoryHookContext;
 import com.atlassian.stash.hook.repository.RepositoryHookService;
 import com.atlassian.stash.pull.PullRequest;
-import com.atlassian.stash.pull.PullRequestRef;
 import com.atlassian.stash.repository.RefChange;
 import com.atlassian.stash.repository.RefChangeType;
 import com.atlassian.stash.repository.Repository;
@@ -56,37 +55,55 @@ public class PostReceiveHook implements AsyncPostReceiveRepositoryHook, Reposito
     	for(RefChange refChange : event.getRefChanges())
     	{
     		if(refChange.getType() == RefChangeType.DELETE) {continue;}
-    		postChange(repository, refChange.getRefId(), refChange.getToHash());
+    		postChange(repository, refChange.getRefId(), refChange.getToHash(), null);
     	}
     }
 
     @EventListener
-    public void pullRequestOpened(PullRequestOpenedEvent event) { HandlePullRequestEvent(event.getPullRequest()); }
+    public void onPullRequestOpened(PullRequestOpenedEvent event) { HandlePullRequestEvent(event.getPullRequest()); }
     
     @EventListener
     public void onPullRequestReopened(PullRequestReopenedEvent event) { HandlePullRequestEvent(event.getPullRequest()); }
 
     @EventListener
-    public void pullRequestRescoped(PullRequestRescopedEvent event) { HandlePullRequestEvent(event.getPullRequest()); }
+    public void onPullRequestRescoped(PullRequestRescopedEvent event) 
+	{ 
+		if(!event.getPreviousFromHash().equals(event.getPullRequest().getFromRef().getLatestChangeset()))
+		{
+			HandlePullRequestEvent(event.getPullRequest());
+		}
+	}
 
     private void HandlePullRequestEvent(PullRequest pullRequest)
     {
     	Repository repository = pullRequest.getToRef().getRepository();
-    	PullRequestRef ref = pullRequest.getFromRef();
-		postChange(repository, ref.getId(), ref.getLatestChangeset());
+    	String ref = "refs/pull-requests/" + Long.toString(pullRequest.getId());
+		
+		postChange(repository, ref, pullRequest.getFromRef().getLatestChangeset(), Long.toString(pullRequest.getId()));
     }
-    private void postChange(Repository repository, String ref, String sha) 
+    private void postChange(Repository repository, String ref, String sha, String pullRequestNbr) 
     {
     	permissionValidationService.validateForRepository(repository, Permission.REPO_READ);
     	Settings settings = repositoryHookService.getSettings(repository, PLUGIN_KEY + ":" + HOOK_KEY);
     	String baseUrl = settings.getString("url");
-        String urlParams = "STASH_REF=" + urlEncode(ref) + "&STASH_SHA=" + urlEncode(sha);
-        
-        //If the url already includes query parameters then append them
+        String urlParams = null;
+		try 
+		{
+			urlParams = "STASH_REF=" + URLEncoder.encode(ref, "UTF-8") + "&STASH_SHA=" + URLEncoder.encode(sha, "UTF-8");
+			if(pullRequestNbr != null){ urlParams += "&STASH_PULL_REQUEST=" + pullRequestNbr;}
+		} 
+		catch (UnsupportedEncodingException e) 
+		{
+			e.printStackTrace();
+			log.error("Error in url-encoding query parameters.", e);
+			throw new RuntimeException(e);
+		}
+		
+        //If the URL already includes query parameters then append them
         int index = baseUrl.indexOf("?");
         if(index != -1)
         {
-        	urlParams.concat("&" + baseUrl.substring(index + 1));
+        	urlParams = urlParams.concat("&" + baseUrl.substring(index + 1));
         	baseUrl = baseUrl.substring(0, index);
         }
         post(baseUrl, urlParams);
@@ -110,11 +127,6 @@ public class PostReceiveHook implements AsyncPostReceiveRepositoryHook, Reposito
             conn.getInputStream().close();
         } 
         catch (Exception e) { log.error("Error in post", e); }
-    }
-
-    private static String urlEncode(String string) {
-        try { return URLEncoder.encode(string, "UTF-8"); } 
-        catch (UnsupportedEncodingException e) { throw new RuntimeException(e); }
     }
 
     @Override
