@@ -67,8 +67,11 @@ public class PostReceiveHook implements AsyncPostReceiveRepositoryHook, Reposito
 
     @EventListener
     public void onPullRequestRescoped(PullRequestRescopedEvent event) 
-	{ 
-		if(!event.getPreviousFromHash().equals(event.getPullRequest().getFromRef().getLatestChangeset()))
+	{
+    	boolean checkFromRefChanged = true; //GetSettings(event.getPullRequest().getToRef().getRepository()).getBoolean("checkFromRefChanged", false);
+    	String previousHash = event.getPreviousFromHash();
+    	String newHash = event.getPullRequest().getFromRef().getLatestChangeset();
+		if(!checkFromRefChanged || previousHash == null || newHash == null || !previousHash.equals(newHash))
 		{
 			HandlePullRequestEvent(event.getPullRequest());
 		}
@@ -83,9 +86,7 @@ public class PostReceiveHook implements AsyncPostReceiveRepositoryHook, Reposito
     }
     private void postChange(Repository repository, String ref, String sha, String pullRequestNbr) 
     {
-    	permissionValidationService.validateForRepository(repository, Permission.REPO_READ);
-    	Settings settings = repositoryHookService.getSettings(repository, PLUGIN_KEY + ":" + HOOK_KEY);
-    	String baseUrl = settings.getString("url");
+    	String baseUrl = GetSettings(repository).getString("url");
         String urlParams = null;
 		try 
 		{
@@ -133,5 +134,11 @@ public class PostReceiveHook implements AsyncPostReceiveRepositoryHook, Reposito
     public void validate(Settings settings, SettingsValidationErrors errors, Repository repository) {
         String url = settings.getString("url");
         if (url == null || url.trim().isEmpty())  { errors.addFieldError("url", "URL field is blank, please supply one"); }
+    }
+    
+    private Settings GetSettings(Repository repository)
+    {
+    	permissionValidationService.validateForRepository(repository, Permission.REPO_READ);
+    	return repositoryHookService.getSettings(repository, PLUGIN_KEY + ":" + HOOK_KEY);
     }
 }
