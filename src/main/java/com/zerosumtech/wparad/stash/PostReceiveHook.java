@@ -68,7 +68,7 @@ public class PostReceiveHook implements AsyncPostReceiveRepositoryHook, Reposito
     @EventListener
     public void onPullRequestRescoped(PullRequestRescopedEvent event) 
 	{
-    	boolean checkFromRefChanged = true; //GetSettings(event.getPullRequest().getToRef().getRepository()).getBoolean("checkFromRefChanged", false);
+    	boolean checkFromRefChanged = GetSettings(event.getPullRequest().getToRef().getRepository()).getBoolean("checkFromRefChanged", false);
     	String previousHash = event.getPreviousFromHash();
     	String newHash = event.getPullRequest().getFromRef().getLatestChangeset();
 		if(!checkFromRefChanged || previousHash == null || newHash == null || !previousHash.equals(newHash))

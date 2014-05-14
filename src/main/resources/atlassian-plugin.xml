@@ -12,5 +12,19 @@
             <directory location="/static/"/>
         </config-form>
     </repository-hook>
-
+    
+    <!--web-item key="stash.pull-request.build-trigger" name="Build" weight="55" section="stash.pull-request.toolbar.actions">
+        <conditions type="AND">
+            <condition class="com.zerosumtech.wparad.stash.PluginEnabledCondition"/>
+            <condition class="com.atlassian.stash.web.conditions.PullRequestInState">
+                <param name="state">OPEN</param>
+            </condition>
+        </conditions>
+        <label key="stash.web.pull-request.toolbar.build">Build</label>
+        <styleClass>triggerJenkinsBuild</styleClass>
+        <resource type="download" name="pull-request-build-button.js" location="static/pull-request-build-button.js" />
+        <dependency>com.atlassian.stash.stash-web-plugin:global</dependency>
+        <context>stash.page.pullRequest.view</context>
+    </web-item-->
+    
 </atlassian-plugin>

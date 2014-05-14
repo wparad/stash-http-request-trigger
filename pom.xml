@@ -4,7 +4,7 @@
 
 	<groupId>com.zerosumtech.wparad.stash</groupId>
 	<artifactId>stash-http-request-trigger</artifactId>
-	<version>1.3.3</version>
+	<version>1.3.11</version>
 
     <scm>
         <connection>scm:git:ssh://git@github.com:wparad/stash-http-request-trigger.git</connection>
@@ -71,6 +71,14 @@
             <version>2.3.0</version>
             <scope>provided</scope>
         </dependency>
+	<dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-plugins-webfragment</artifactId>
+		<version>${stash.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+
     </dependencies>
 	
 	<build>

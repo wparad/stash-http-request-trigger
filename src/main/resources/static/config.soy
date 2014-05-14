@@ -5,12 +5,19 @@
  * @param? errors
  */
 {template .formContents}
-    {call aui.form.textField}
-        {param id: 'url' /}
-        {param value: $config['url'] /}
-        {param labelContent: 'URL' /}
-        {param descriptionText: 'Specify a URL here.  An http POST request will be sent on pull-requests and ref changes to the repository.' /}
-        {param extraClasses: 'long' /}
-        {param errorTexts: $errors ? $errors['url'] : null /}
+  
+    <div class="field-group">
+        <label for="url">{'URL'}</label>
+        <input id="url" style="max-width: 600px" class="text" type="text" name="url" value="{$config['url']}">
+        <div class="description">Specify a URL here.  An http POST request will be sent on pull-requests and ref changes to the repository.</div>
+		<div class="error">{$errors ? $errors['url'] : ''}</div>
+    </div>
+    
+    {call widget.aui.form.checkbox}
+        {param id: 'checkFromRefChanged' /}
+        {param checked: $config['checkFromRefChanged'] /}
+        {param labelHtml: 'Check from-ref change exists on pull-requests.' /}
+        {param description: 'Trigger rescoped pull-requests only if the from-ref has changed. Should changes to the to-ref cause the pull-request to get rebuilt?' /}
     {/call}
+    
 {/template}
