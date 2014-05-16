@@ -1,30 +1,25 @@
-define('plugin/jenkins/pull-request-build-button', [
-  'jquery',
-  'aui',
-  'model/page-state'
-], function($, AJS, pageState) {
-
-  var resourceUrl = 'http://requestb.in/x0va6sx0'
-  var waiting = '<span class="aui-icon aui-icon-wait">Wait</span>';
-  
-  $(".triggerJenkinsBuild").click(function() {
-    var $this = $(this);
-    var text = $this.text();
-
-    $this.attr("disabled", "disabled").html(waiting + " " + text);
-  
-    $.post(resourceUrl, function() {
-      // Place in timer for UI-happiness - might go "too quick" and not notice
-      // it actually triggered
-      setTimeout(function() {
-          $this.removeAttr("disabled").text(text);
-      }, 500);
-    });
-    return false;
-  });
-
-});
-
-AJS.$(document).ready(function() {
-    require('plugin/jenkins/pull-request-build-button');
-});
+(function ($) 
+{
+    $(document).ready(function () 
+    {
+        var waiting = '<span class="aui-icon aui-icon-wait">Wait</span>';
+        var button = $(".triggerBuild");
+        var link = $('<textarea />').html(button.text()).text();
+        
+        button.html("Build");
+		button.click(function() 
+		{
+		    var $this = $(this);
+		    var text = $this.text();
+		
+		    $this.attr("disabled", "disabled").html(waiting + " " + text);
+		    $.post(link, function() 
+		    { 
+		    	setTimeout(function() { $this.removeAttr("disabled").text(text).reload(); }, 500);  
+		    });
+		    //Set it back anyway after 1 second
+		    setTimeout(function() { $this.removeAttr("disabled").text(text).reload(); }, 1000);
+		    return false;
+		});
+	});
+})(AJS.$);
