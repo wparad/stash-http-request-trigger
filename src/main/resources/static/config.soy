@@ -7,8 +7,8 @@
 {template .formContents}
   
     <div class="field-group">
-        <label for="url">{'URL'}</label>
-        <input id="url" style="max-width: 600px" class="text" type="text" name="url" value="{$config['url']}">
+        <label for="url">URL</label>
+        <input id="url" style="max-width: 600px" class="text" type="text" name="url" value="{$config and $config['url'] ? $config['url'] : ''}">
         <div class="description">Specify a URL here.  An http POST request will be sent on pull-requests and ref changes to the repository.</div>
 		<div class="error">{$errors ? $errors['url'] : ''}</div>
     </div>
