@@ -14,6 +14,8 @@ import com.atlassian.stash.repository.Repository;
 import com.atlassian.stash.setting.Settings;
 import com.atlassian.stash.user.Permission;
 import com.atlassian.stash.user.PermissionValidationService;
+import com.atlassian.stash.user.SecurityService;
+import com.atlassian.stash.util.Operation;
 
 public class RepositoryInformationService 
 {
@@ -22,29 +24,59 @@ public class RepositoryInformationService
 	private static final String PLUGIN_KEY = "com.zerosumtech.wparad.stash.stash-http-request-trigger:postReceiveHook";
 	private final PermissionValidationService permissionValidationService;
 	private final RepositoryHookService repositoryHookService;
+	private final SecurityService securityService;
 	  
 	public RepositoryInformationService(
 			PermissionValidationService permissionValidationService, 
-			RepositoryHookService repositoryHookService) 
+			RepositoryHookService repositoryHookService,
+			SecurityService securityService) 
 	{
 		this.permissionValidationService = permissionValidationService;
 	  	this.repositoryHookService = repositoryHookService;
+		this.securityService = securityService;
 	}
 	  
-	public boolean IsPluginEnabled(Repository repository)
+	public boolean IsPluginEnabled(final Repository repository)
 	{
 		permissionValidationService.validateForRepository(repository, Permission.REPO_READ);
-		RepositoryHook repositoryHook = repositoryHookService.getByKey(repository, PLUGIN_KEY);
-		return repositoryHook != null && repositoryHook.isEnabled() && GetSettings(repository) != null;
+		try 
+		{
+			return securityService.doWithPermission("Retrieving repository hook", Permission.REPO_ADMIN, new Operation<Boolean, Exception>()
+			{
+				@Override
+				public Boolean perform() throws Exception 
+				{
+					RepositoryHook repositoryHook = repositoryHookService.getByKey(repository, PLUGIN_KEY); 
+					return repositoryHook != null && repositoryHook.isEnabled() && repositoryHookService.getSettings(repository, PLUGIN_KEY) != null;
+				}
+			}).booleanValue();
+		}
+		catch (Exception e)
+		{
+			logger.error("Failed: IsPluginEnabled({})", repository.getName(), e);
+			return false;
+		}
 	}
 
-	private Settings GetSettings(Repository repository)
+	private Settings GetSettings(final Repository repository)
 	{
 		permissionValidationService.validateForRepository(repository, Permission.REPO_READ);
-		return repositoryHookService.getSettings(repository, PLUGIN_KEY);
+		try 
+		{
+			return securityService.doWithPermission("Retrieving settings", Permission.REPO_ADMIN, new Operation<Settings, Exception>()
+			{
+				@Override
+				public Settings perform() throws Exception { return repositoryHookService.getSettings(repository, PLUGIN_KEY); } 
+			});
+		}
+		catch(Exception e)
+		{
+			logger.error("Failed: GetSettings({})", repository.getName(), e);
+			return null;
+		}
 	}
   
-	public boolean CheckFromRefChanged(Repository repository)
+	public boolean CheckFromRefChanged(final Repository repository)
 	{
 		Settings settings = GetSettings(repository);
 		return settings != null && settings.getBoolean("checkFromRefChanged", false);
@@ -56,7 +88,7 @@ public class RepositoryInformationService
 		Post(GetUrl(repository, ref, sha, pullRequestNbr));
 	}
   
-	public String GetUrl(Repository repository, String ref, String sha, String pullRequestNbr)
+	public String GetUrl(final Repository repository, String ref, String sha, String pullRequestNbr)
 	{
 		String urlParams = null;
 		try 
