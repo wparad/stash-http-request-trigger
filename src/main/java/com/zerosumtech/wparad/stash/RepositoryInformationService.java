@@ -33,6 +33,7 @@ public class RepositoryInformationService
 	  
 	public boolean IsPluginEnabled(Repository repository)
 	{
+		permissionValidationService.validateForRepository(repository, Permission.REPO_READ);
 		RepositoryHook repositoryHook = repositoryHookService.getByKey(repository, PLUGIN_KEY);
 		return repositoryHook != null && repositoryHook.isEnabled() && GetSettings(repository) != null;
 	}
