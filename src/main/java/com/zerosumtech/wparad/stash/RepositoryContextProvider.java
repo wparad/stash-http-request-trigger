@@ -26,7 +26,11 @@ public class RepositoryContextProvider implements ContextProvider
 		Repository repository = (Repository)context.get("repository");
 		PullRequest pullRequest = (PullRequest)context.get("pullRequest");
     	String ref = "refs/pull-requests/" + Long.toString(pullRequest.getId());
-    	String buildUrl = repositoryInformationService.GetUrl(repository, ref, pullRequest.getFromRef().getLatestChangeset(), Long.toString(pullRequest.getId()));
+    	String buildUrl = repositoryInformationService.GetUrl(repository,
+    			ref,
+    			pullRequest.getFromRef().getLatestChangeset(),
+    			pullRequest.getToRef().getId(),
+    			Long.toString(pullRequest.getId()));
     	return ImmutableMap.<String, Object>builder().put("buildUrl", buildUrl).build();
 	}
 }

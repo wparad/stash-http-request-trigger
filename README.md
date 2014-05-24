@@ -17,8 +17,17 @@ Once installed, follow these steps:
 - For the **Stash Http Request Trigger**, click the *Enable* button.
 - Enter a URL
 
+### The following query parameters will be inserted into the http request
+#### For Ref Changes
+* STASH_REF - ref of change refs/heads/master
+* STASH_SHA - Resulting sha of the ref change
+
+#### For Pull Requests
+* STASH_REF - refs/pull-requests/1
+* STASH_SHA - pull request sha
+* STASH_PULL_REQUEST - pull request id 1
+* STASH_TO_REF - refs/heads/master (or whereever the pull request is to)
+
 ##Development
-###Make an eclipse solution
-mvn -DdownloadSources=true eclipse:eclipse
-###Compile
-mvn -DdownloadSources=trueclean compile assembly:single
+Run `rake -T` to see the list of possible commands.
+

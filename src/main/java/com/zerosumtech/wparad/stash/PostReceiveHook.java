@@ -39,7 +39,7 @@ public class PostReceiveHook implements AsyncPostReceiveRepositoryHook, Reposito
     	for(RefChange refChange : event.getRefChanges())
     	{
     		if(refChange.getType() == RefChangeType.DELETE) {continue;}
-    		repositoryInformationService.PostChange(repository, refChange.getRefId(), refChange.getToHash(), null);
+    		repositoryInformationService.PostChange(repository, refChange.getRefId(), refChange.getToHash(), null, null);
     	}
     }
 
@@ -66,7 +66,11 @@ public class PostReceiveHook implements AsyncPostReceiveRepositoryHook, Reposito
     	Repository repository = pullRequest.getToRef().getRepository();
     	String ref = "refs/pull-requests/" + Long.toString(pullRequest.getId());
 		
-		repositoryInformationService.PostChange(repository, ref, pullRequest.getFromRef().getLatestChangeset(), Long.toString(pullRequest.getId()));
+		repositoryInformationService.PostChange(repository,
+				ref,
+				pullRequest.getFromRef().getLatestChangeset(),
+				pullRequest.getToRef().getId(),
+				Long.toString(pullRequest.getId()));
     }
 
     @Override

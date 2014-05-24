@@ -82,19 +82,24 @@ public class RepositoryInformationService
 		return settings != null && settings.getBoolean("checkFromRefChanged", false);
 	}
 
-	public void PostChange(Repository repository, String ref, String sha, String pullRequestNbr)
+	public void PostChange(Repository repository, String ref, String sha, String toRef, String pullRequestNbr)
 	{
 		if(!IsPluginEnabled(repository)) { return; }
-		Post(GetUrl(repository, ref, sha, pullRequestNbr));
+		Post(GetUrl(repository, ref, sha, toRef, pullRequestNbr));
 	}
   
-	public String GetUrl(final Repository repository, String ref, String sha, String pullRequestNbr)
+	public String GetUrl(final Repository repository, String ref, String sha, String toRef, String pullRequestNbr)
 	{
-		String urlParams = null;
+		StringBuilder urlParams = new StringBuilder();
 		try 
 		{
-			urlParams = "STASH_REF=" + URLEncoder.encode(ref, "UTF-8") + "&STASH_SHA=" + URLEncoder.encode(sha, "UTF-8");
-			if(pullRequestNbr != null){ urlParams += "&STASH_PULL_REQUEST=" + pullRequestNbr;}
+			urlParams.append("STASH_REF=" + URLEncoder.encode(ref, "UTF-8"));
+			urlParams.append("&STASH_SHA=" + URLEncoder.encode(sha, "UTF-8"));
+			if(pullRequestNbr != null)
+			{
+				urlParams.append("&STASH_TO_REF=" + URLEncoder.encode(toRef, "UTF-8"));
+				urlParams.append("&STASH_PULL_REQUEST=" + pullRequestNbr);
+			}
 		} 
 		catch (UnsupportedEncodingException e) 
 		{
@@ -105,7 +110,7 @@ public class RepositoryInformationService
 		//If the URL already includes query parameters then append them
 		String baseUrl = GetSettings(repository).getString("url");
 		int index = baseUrl.indexOf("?");
-		return baseUrl.concat( (index == -1 ? "?" : "&") + urlParams);
+		return baseUrl.concat( (index == -1 ? "?" : "&") + urlParams.toString());
 	}
   
 	public void Post(String url) 
