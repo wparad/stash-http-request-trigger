@@ -9,8 +9,15 @@
     <div class="field-group">
         <label for="url">URL</label>
         <input id="url" style="max-width: 600px" class="text" type="text" name="url" value="{$config and $config['url'] ? $config['url'] : ''}">
-        <div class="description">Specify a URL here.  An http POST request will be sent on pull-requests and ref changes to the repository.</div>
+        <div class="description">Specify a URL here.  An http POST request will be sent on ref changes to the repository.</div>
 		<div class="error">{$errors ? $errors['url'] : ''}</div>
+    </div>
+    
+    <div class="field-group">
+        <label for="prurl">Pull Request URL</label>
+        <input id="prurl" style="max-width: 600px" class="text" type="text" name="prurl" value="{$config and $config['prurl'] ? $config['prurl'] : ''}">
+        <div class="description">Specify a URL here.  An http POST request will be sent on pull-requests to the repository. (Defaults to above)</div>
+		<div class="error">{$errors ? $errors['prurl'] : ''}</div>
     </div>
     
     {call widget.aui.form.checkbox}

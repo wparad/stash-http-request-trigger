@@ -5,6 +5,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +18,7 @@ import com.atlassian.stash.user.Permission;
 import com.atlassian.stash.user.PermissionValidationService;
 import com.atlassian.stash.user.SecurityService;
 import com.atlassian.stash.util.Operation;
+import com.google.common.collect.Maps;
 
 public class RepositoryInformationService 
 {
@@ -75,6 +78,26 @@ public class RepositoryInformationService
 			return null;
 		}
 	}
+	
+	private void UpdatePullRequestUrl(final Repository repository)
+	{
+		permissionValidationService.validateForRepository(repository, Permission.REPO_READ);
+		try
+		{
+			securityService.doWithPermission("Updating settings", Permission.REPO_ADMIN, new Operation<Boolean, Exception>()
+			{
+				@Override
+				public Boolean perform() throws Exception
+				{
+					Map<String, Object> newMap = Maps.newHashMap(repositoryHookService.getSettings(repository, PLUGIN_KEY).asMap());
+					newMap.put("prurl", newMap.get("url"));
+					repositoryHookService.setSettings(repository, PLUGIN_KEY, repositoryHookService.createSettingsBuilder().addAll(newMap).build());
+					return true;
+				}
+			});
+		}
+		catch(Exception e) { logger.error("Failed: UpdateSettings({})", repository.getName(), e); }
+	}
   
 	public boolean CheckFromRefChanged(final Repository repository)
 	{
@@ -88,8 +111,12 @@ public class RepositoryInformationService
 		Post(GetUrl(repository, ref, sha, toRef, pullRequestNbr));
 	}
   
+	//TODO: split pull request generation from ref change, these are actually different things.
 	public String GetUrl(final Repository repository, String ref, String sha, String toRef, String pullRequestNbr)
 	{
+		Settings settings = GetSettings(repository);
+		String baseUrl = settings.getString("url");
+		String pullRequestUrl = settings.getString("prurl");
 		StringBuilder urlParams = new StringBuilder();
 		try 
 		{
@@ -97,6 +124,9 @@ public class RepositoryInformationService
 			urlParams.append("&STASH_SHA=" + URLEncoder.encode(sha, "UTF-8"));
 			if(pullRequestNbr != null)
 			{
+				if(pullRequestUrl == null || pullRequestUrl.isEmpty()) { UpdatePullRequestUrl(repository); }
+				else{ baseUrl = pullRequestUrl; }
+				
 				urlParams.append("&STASH_TO_REF=" + URLEncoder.encode(toRef, "UTF-8"));
 				urlParams.append("&STASH_PULL_REQUEST=" + pullRequestNbr);
 			}
@@ -108,7 +138,6 @@ public class RepositoryInformationService
 		}
 
 		//If the URL already includes query parameters then append them
-		String baseUrl = GetSettings(repository).getString("url");
 		int index = baseUrl.indexOf("?");
 		return baseUrl.concat( (index == -1 ? "?" : "&") + urlParams.toString());
 	}

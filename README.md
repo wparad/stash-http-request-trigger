@@ -15,7 +15,8 @@ Once installed, follow these steps:
 - Hit the *Settings* link
 - In the left-navigation, hit the *Hooks* link
 - For the **Stash Http Request Trigger**, click the *Enable* button.
-- Enter a URL
+- Enter a URL (And another for pull-requests, if they should be sent to different places)
+
 
 ### The following query parameters will be inserted into the http request
 #### For Ref Changes
@@ -31,3 +32,5 @@ Once installed, follow these steps:
 ##Development
 Run `rake -T` to see the list of possible commands.
 
+### Common Issues
+* Stash default login is admin/admin
