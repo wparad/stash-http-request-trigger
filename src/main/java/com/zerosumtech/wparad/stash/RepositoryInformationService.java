@@ -4,8 +4,16 @@ import java.io.DataOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.HttpURLConnection;
 import java.net.URLEncoder;
+import java.security.SecureRandom;
 import java.util.Map;
+import java.util.Random;
+
+import javax.net.ssl.*;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,7 +158,13 @@ public class RepositoryInformationService
 			int index = url.indexOf("?");
 			String baseUrl = url.substring(0, index);
 			String urlParams = url.substring(index + 1);
-			URLConnection conn = new URL(baseUrl).openConnection();
+			HttpsURLConnection conn = (HttpsURLConnection)(new URL(baseUrl).openConnection());
+			
+			//Use the unsecure trustmanager by default
+			SSLContext sc = SSLContext.getInstance("TLS");
+			sc.init(null, new TrustManager[] { new UnsecureX509TrustManager() }, new SecureRandom());
+			conn.setSSLSocketFactory(sc.getSocketFactory());
+			conn.setHostnameVerifier(new HostnameVerifier() { public boolean verify(String string, SSLSession ssls) { return true; } });
 			conn.setDoOutput(true);  // Triggers POST
 			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
