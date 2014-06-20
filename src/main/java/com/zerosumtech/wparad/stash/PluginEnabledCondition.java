@@ -22,8 +22,7 @@ public class PluginEnabledCondition implements Condition
   {
 	  final Object obj = context.get("repository");
 	  if (obj == null || !(obj instanceof Repository)) { return false; }
-    
-	  Repository repository = (Repository) obj;
-	  return repositoryInformationService.IsPluginEnabled(repository);
+
+	  return repositoryInformationService.ArePullRequestsConfigured((Repository) obj);
   }
 }

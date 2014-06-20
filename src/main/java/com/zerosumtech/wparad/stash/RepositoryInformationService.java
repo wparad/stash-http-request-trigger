@@ -3,16 +3,13 @@ package com.zerosumtech.wparad.stash;
 import java.io.DataOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.security.SecureRandom;
-import java.util.Map;
-import java.util.Random;
 
-import javax.net.ssl.*;
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 
 import org.slf4j.Logger;
@@ -26,7 +23,6 @@ import com.atlassian.stash.user.Permission;
 import com.atlassian.stash.user.PermissionValidationService;
 import com.atlassian.stash.user.SecurityService;
 import com.atlassian.stash.util.Operation;
-import com.google.common.collect.Maps;
 
 public class RepositoryInformationService 
 {
@@ -86,26 +82,6 @@ public class RepositoryInformationService
 			return null;
 		}
 	}
-	
-	private void UpdatePullRequestUrl(final Repository repository)
-	{
-		permissionValidationService.validateForRepository(repository, Permission.REPO_READ);
-		try
-		{
-			securityService.doWithPermission("Updating settings", Permission.REPO_ADMIN, new Operation<Boolean, Exception>()
-			{
-				@Override
-				public Boolean perform() throws Exception
-				{
-					Map<String, Object> newMap = Maps.newHashMap(repositoryHookService.getSettings(repository, PLUGIN_KEY).asMap());
-					newMap.put("prurl", newMap.get("url"));
-					repositoryHookService.setSettings(repository, PLUGIN_KEY, repositoryHookService.createSettingsBuilder().addAll(newMap).build());
-					return true;
-				}
-			});
-		}
-		catch(Exception e) { logger.error("Failed: UpdateSettings({})", repository.getName(), e); }
-	}
   
 	public boolean CheckFromRefChanged(final Repository repository)
 	{
@@ -116,25 +92,32 @@ public class RepositoryInformationService
 	public void PostChange(Repository repository, String ref, String sha, String toRef, String pullRequestNbr)
 	{
 		if(!IsPluginEnabled(repository)) { return; }
-		Post(GetUrl(repository, ref, sha, toRef, pullRequestNbr));
+		Post(GetUrl(repository, ref, sha, toRef, pullRequestNbr), UseSecureSsl(repository));
 	}
   
+	private boolean UseSecureSsl(Repository repository) 
+	{
+		Settings settings = GetSettings(repository);
+		return settings != null && !settings.getBoolean("ignoreSslCerts", false);
+	}
+
 	//TODO: split pull request generation from ref change, these are actually different things.
 	public String GetUrl(final Repository repository, String ref, String sha, String toRef, String pullRequestNbr)
 	{
 		Settings settings = GetSettings(repository);
-		String baseUrl = settings.getString("url");
-		String pullRequestUrl = settings.getString("prurl");
+		String baseUrl = "";
 		StringBuilder urlParams = new StringBuilder();
 		try 
 		{
 			urlParams.append("STASH_REF=" + URLEncoder.encode(ref, "UTF-8"));
 			urlParams.append("&STASH_SHA=" + URLEncoder.encode(sha, "UTF-8"));
-			if(pullRequestNbr != null)
+			if(pullRequestNbr == null)
 			{
-				if(pullRequestUrl == null || pullRequestUrl.isEmpty()) { UpdatePullRequestUrl(repository); }
-				else{ baseUrl = pullRequestUrl; }
-				
+				baseUrl = settings.getString("url");
+			}
+			else
+			{
+				baseUrl = settings.getString("prurl");
 				urlParams.append("&STASH_TO_REF=" + URLEncoder.encode(toRef, "UTF-8"));
 				urlParams.append("&STASH_PULL_REQUEST=" + pullRequestNbr);
 			}
@@ -150,7 +133,7 @@ public class RepositoryInformationService
 		return baseUrl.concat( (index == -1 ? "?" : "&") + urlParams.toString());
 	}
   
-	public void Post(String url) 
+	public void Post(String url, boolean useSecureSsl) 
 	{
 		try 
 		{
@@ -160,11 +143,10 @@ public class RepositoryInformationService
 			String urlParams = url.substring(index + 1);
 			HttpsURLConnection conn = (HttpsURLConnection)(new URL(baseUrl).openConnection());
 			
-			//Use the unsecure trustmanager by default
 			SSLContext sc = SSLContext.getInstance("TLS");
-			sc.init(null, new TrustManager[] { new UnsecureX509TrustManager() }, new SecureRandom());
+			sc.init(null, new TrustManager[] { useSecureSsl ? new SecureX509TrustManager() : new UnsecureX509TrustManager() }, new SecureRandom());
 			conn.setSSLSocketFactory(sc.getSocketFactory());
-			conn.setHostnameVerifier(new HostnameVerifier() { public boolean verify(String string, SSLSession ssls) { return true; } });
+			conn.setHostnameVerifier(new HostnameVerifier() { public boolean verify(String string, SSLSession ssls) { return true; }});
 			conn.setDoOutput(true);  // Triggers POST
 			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
@@ -177,5 +159,11 @@ public class RepositoryInformationService
 			logger.info("Success Posting to URL: {}", url);
 		} 
 		catch (Exception e)  { logger.error("Failed Posting to URL: {}", url, e); }
+	}
+
+	public boolean ArePullRequestsConfigured(Repository repository) 
+	{
+		String pullRequestUrl = GetSettings(repository).getString("prurl");
+		return IsPluginEnabled(repository) && pullRequestUrl != null && !pullRequestUrl.isEmpty(); 
 	}
 }
