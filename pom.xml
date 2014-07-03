@@ -4,7 +4,7 @@
 
 	<groupId>com.zerosumtech.wparad.stash</groupId>
 	<artifactId>stash-http-request-trigger</artifactId>
-	<version>1.5.6</version>
+	<version>1.5.7</version>
 
     <scm>
         <connection>scm:git:ssh://git@github.com:wparad/stash-http-request-trigger.git</connection>

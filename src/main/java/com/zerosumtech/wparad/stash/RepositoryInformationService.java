@@ -92,7 +92,8 @@ public class RepositoryInformationService
 	public void PostChange(Repository repository, String ref, String sha, String toRef, String pullRequestNbr)
 	{
 		if(!IsPluginEnabled(repository)) { return; }
-		Post(GetUrl(repository, ref, sha, toRef, pullRequestNbr), UseSecureSsl(repository));
+		if(pullRequestNbr == null) {Post(GetUrl(repository, ref, sha), UseSecureSsl(repository));}
+		else {Post(GetPullRequestUrl(repository, ref, sha, toRef, pullRequestNbr, false), UseSecureSsl(repository));}
 	}
   
 	private boolean UseSecureSsl(Repository repository) 
@@ -101,38 +102,52 @@ public class RepositoryInformationService
 		return settings != null && !settings.getBoolean("ignoreSslCerts", false);
 	}
 
-	//TODO: split pull request generation from ref change, these are actually different things.
-	public String GetUrl(final Repository repository, String ref, String sha, String toRef, String pullRequestNbr)
+	public String GetUrl(final Repository repository, String ref, String sha)
 	{
-		Settings settings = GetSettings(repository);
-		String baseUrl = "";
+		String baseUrl = GetSettings(repository).getString("url");
 		StringBuilder urlParams = new StringBuilder();
-		try 
+		try
 		{
 			urlParams.append("STASH_REF=" + URLEncoder.encode(ref, "UTF-8"));
 			urlParams.append("&STASH_SHA=" + URLEncoder.encode(sha, "UTF-8"));
-			if(pullRequestNbr == null)
-			{
-				baseUrl = settings.getString("url");
-			}
-			else
-			{
-				baseUrl = settings.getString("prurl");
-				urlParams.append("&STASH_TO_REF=" + URLEncoder.encode(toRef, "UTF-8"));
-				urlParams.append("&STASH_PULL_REQUEST=" + pullRequestNbr);
-			}
-		} 
-		catch (UnsupportedEncodingException e) 
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			logger.error("Failed to get URL ({}, {}, {})", new Object[]{repository.getName(), ref, sha});
+			throw new RuntimeException(e);
+		}
+
+		return CombineURL(baseUrl, urlParams.toString());
+	}
+
+	public String GetPullRequestUrl(final Repository repository, String ref, String sha, String toRef, String pullRequestNbr, boolean fromWebUI)
+	{
+		String baseUrl = GetSettings(repository).getString("prurl");
+		StringBuilder urlParams = new StringBuilder();
+		try
+		{
+			urlParams.append("STASH_REF=" + URLEncoder.encode(ref, "UTF-8"));
+			urlParams.append("&STASH_SHA=" + URLEncoder.encode(sha, "UTF-8"));
+			urlParams.append("&STASH_TO_REF=" + URLEncoder.encode(toRef, "UTF-8"));
+			urlParams.append("&STASH_PULL_REQUEST=" + pullRequestNbr);
+			if(fromWebUI) {urlParams.append("&STASH_TRIGGER=" + URLEncoder.encode("build_button", "UTF-8"));}
+		}
+		catch (UnsupportedEncodingException e)
 		{
 			logger.error("Failed to get URL ({}, {}, {}, {})", new Object[]{repository.getName(), ref, sha, pullRequestNbr});
 			throw new RuntimeException(e);
 		}
 
+		return CombineURL(baseUrl, urlParams.toString());
+	}
+	
+	private String CombineURL(String baseUrl, String urlParams)
+	{
 		//If the URL already includes query parameters then append them
 		int index = baseUrl.indexOf("?");
 		return baseUrl.concat( (index == -1 ? "?" : "&") + urlParams.toString());
 	}
-  
+	
 	public void Post(String url, boolean useSecureSsl) 
 	{
 		try 
