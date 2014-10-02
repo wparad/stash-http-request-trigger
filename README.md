@@ -22,12 +22,16 @@ Once installed, follow these steps:
 #### For Ref Changes
 * STASH_REF - ref of change refs/heads/master
 * STASH_SHA - Resulting sha of the ref change
+* STASH_REPO - Repository of where the change happened
+* STASH_PROJECT - Project key of Stash project
 
 #### For Pull Requests
 * STASH_REF - refs/pull-requests/1
 * STASH_SHA - pull request sha
 * STASH_PULL_REQUEST - pull request id 1
 * STASH_TO_REF - refs/heads/master (or whereever the pull request is to)
+* STASH_REPO - Repository of where the change happened
+* STASH_PROJECT - Project key of Stash project
 
 ##Development
 Run `rake -T` to see the list of possible commands.
