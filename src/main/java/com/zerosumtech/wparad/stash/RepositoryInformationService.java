@@ -28,7 +28,6 @@ public class RepositoryInformationService
 {
 	private static final Logger logger = LoggerFactory.getLogger(RepositoryInformationService.class);
 	
-	private static final String PLUGIN_KEY = "com.zerosumtech.wparad.stash.stash-http-request-trigger:postReceiveHook";
 	private final PermissionValidationService permissionValidationService;
 	private final RepositoryHookService repositoryHookService;
 	private final SecurityService securityService;
@@ -53,8 +52,8 @@ public class RepositoryInformationService
 				@Override
 				public Boolean perform() throws Exception 
 				{
-					RepositoryHook repositoryHook = repositoryHookService.getByKey(repository, PLUGIN_KEY); 
-					return repositoryHook != null && repositoryHook.isEnabled() && repositoryHookService.getSettings(repository, PLUGIN_KEY) != null;
+					RepositoryHook repositoryHook = repositoryHookService.getByKey(repository, Constants.PLUGIN_KEY); 
+					return repositoryHook != null && repositoryHook.isEnabled() && repositoryHookService.getSettings(repository, Constants.PLUGIN_KEY) != null;
 				}
 			}).booleanValue();
 		}
@@ -73,7 +72,7 @@ public class RepositoryInformationService
 			return securityService.doWithPermission("Retrieving settings", Permission.REPO_ADMIN, new Operation<Settings, Exception>()
 			{
 				@Override
-				public Settings perform() throws Exception { return repositoryHookService.getSettings(repository, PLUGIN_KEY); } 
+				public Settings perform() throws Exception { return repositoryHookService.getSettings(repository, Constants.PLUGIN_KEY); } 
 			});
 		}
 		catch(Exception e)
@@ -86,30 +85,38 @@ public class RepositoryInformationService
 	public boolean CheckFromRefChanged(final Repository repository)
 	{
 		Settings settings = GetSettings(repository);
-		return settings != null && settings.getBoolean("checkFromRefChanged", false);
+		return settings != null && settings.getBoolean(Constants.CONFIG_KEY_CHECKFROMREFCHANGED, false);
 	}
 
-	public void PostChange(Repository repository, String ref, String sha, String toRef, String pullRequestNbr)
+	public void PostChange(final Repository repository, String ref, String sha, String toRef, String pullRequestNbr)
 	{
 		if(!IsPluginEnabled(repository)) { return; }
-		if(pullRequestNbr == null) {Post(GetUrl(repository, ref, sha), UseSecureSsl(repository));}
-		else {Post(GetPullRequestUrl(repository, ref, sha, toRef, pullRequestNbr, false), UseSecureSsl(repository));}
-	}
-  
-	private boolean UseSecureSsl(Repository repository) 
-	{
+		
 		Settings settings = GetSettings(repository);
-		return settings != null && !settings.getBoolean("ignoreSslCerts", false);
+		String url = null;
+		if(pullRequestNbr == null)
+		{
+			String regex = settings.getString(Constants.CONFIG_KEY_REFREGEX);
+			logger.error("{} {}", regex, ref);
+			if(regex != null && !regex.trim().isEmpty() && !ref.matches(regex)){ return; }
+			url = GetUrl(repository, ref, sha);
+		}
+		else {url = GetPullRequestUrl(repository, ref, sha, toRef, pullRequestNbr, false);}
+		
+		boolean useSecureSsl = settings != null && settings.getBoolean(Constants.CONFIG_KEY_REQUIRESSLCERTS, false);
+		Post(url, useSecureSsl);
 	}
 
 	public String GetUrl(final Repository repository, String ref, String sha)
 	{
-		String baseUrl = GetSettings(repository).getString("url");
+		String baseUrl = GetSettings(repository).getString(Constants.CONFIG_KEY_URL);
 		StringBuilder urlParams = new StringBuilder();
 		try
 		{
 			urlParams.append("STASH_REF=" + URLEncoder.encode(ref, "UTF-8"));
 			urlParams.append("&STASH_SHA=" + URLEncoder.encode(sha, "UTF-8"));
+			urlParams.append("&STASH_REPO=" + URLEncoder.encode(repository.getName(), "UTF-8"));
+			urlParams.append("&STASH_PROJECT=" + URLEncoder.encode(repository.getProject().getKey(), "UTF-8"));
 		}
 		catch (UnsupportedEncodingException e)
 		{
@@ -122,13 +129,15 @@ public class RepositoryInformationService
 
 	public String GetPullRequestUrl(final Repository repository, String ref, String sha, String toRef, String pullRequestNbr, boolean fromWebUI)
 	{
-		String baseUrl = GetSettings(repository).getString("prurl");
+		String baseUrl = GetSettings(repository).getString(Constants.CONFIG_KEY_PRURL);
 		StringBuilder urlParams = new StringBuilder();
 		try
 		{
 			urlParams.append("STASH_REF=" + URLEncoder.encode(ref, "UTF-8"));
 			urlParams.append("&STASH_SHA=" + URLEncoder.encode(sha, "UTF-8"));
 			urlParams.append("&STASH_TO_REF=" + URLEncoder.encode(toRef, "UTF-8"));
+			urlParams.append("&STASH_REPO=" + URLEncoder.encode(repository.getName(), "UTF-8"));
+			urlParams.append("&STASH_PROJECT=" + URLEncoder.encode(repository.getProject().getKey(), "UTF-8"));
 			urlParams.append("&STASH_PULL_REQUEST=" + pullRequestNbr);
 			if(fromWebUI) {urlParams.append("&STASH_TRIGGER=" + URLEncoder.encode("build_button", "UTF-8"));}
 		}
@@ -178,7 +187,7 @@ public class RepositoryInformationService
 
 	public boolean ArePullRequestsConfigured(Repository repository) 
 	{
-		String pullRequestUrl = GetSettings(repository).getString("prurl");
+		String pullRequestUrl = GetSettings(repository).getString(Constants.CONFIG_KEY_PRURL);
 		return IsPluginEnabled(repository) && pullRequestUrl != null && !pullRequestUrl.isEmpty(); 
 	}
 }

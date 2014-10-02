@@ -16,6 +16,8 @@ import com.atlassian.stash.setting.Settings;
 import com.atlassian.stash.setting.SettingsValidationErrors;
 
 import java.util.Collection;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 public class PostReceiveHook implements AsyncPostReceiveRepositoryHook, RepositorySettingsValidator 
 {
@@ -74,8 +76,15 @@ public class PostReceiveHook implements AsyncPostReceiveRepositoryHook, Reposito
     }
 
     @Override
-    public void validate(Settings settings, SettingsValidationErrors errors, Repository repository) {
-        String url = settings.getString("url");
+    public void validate(Settings settings, SettingsValidationErrors errors, Repository repository)
+    {
+        String url = settings.getString(Constants.CONFIG_KEY_URL);
         if (url == null || url.trim().isEmpty())  { errors.addFieldError("url", "URL field is blank, please supply one"); }
+        String regex = settings.getString(Constants.CONFIG_KEY_REFREGEX);
+        if (regex != null && !regex.trim().isEmpty())
+        {
+            try { Pattern.compile(regex); }
+            catch(PatternSyntaxException e) { errors.addFieldError(Constants.CONFIG_KEY_REFREGEX, "The Ref Regex is invalid, please supply a valid one: " + e.getMessage()); }
+        }
     }
 }

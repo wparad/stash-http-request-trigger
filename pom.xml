@@ -4,7 +4,7 @@
 
 	<groupId>com.zerosumtech.wparad.stash</groupId>
 	<artifactId>stash-http-request-trigger</artifactId>
-	<version>1.5.7</version>
+	<version>1.5.13</version>
 
     <scm>
         <connection>scm:git:ssh://git@github.com:wparad/stash-http-request-trigger.git</connection>
@@ -166,6 +166,9 @@
 											<goal>copy-bundled-dependencies</goal>
 											<goal>generate-manifest</goal>
 											<goal>generate-rest-docs</goal>
+											<goal>
+												filter-test-plugin-descriptor
+											</goal>
 										</goals>
 									</pluginExecutionFilter>
 									<action>

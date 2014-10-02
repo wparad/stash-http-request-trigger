@@ -7,30 +7,37 @@
 {template .formContents}
   
     <div class="field-group">
-        <label for="url">URL</label>
+        <label for="url">Ref URL</label>
         <input id="url" style="max-width: 600px" class="text" type="text" name="url" value="{$config and $config['url'] ? $config['url'] : ''}">
         <div class="description">Specify a URL here.  An http POST request will be sent on ref changes to the repository.</div>
-		<div class="error">{$errors ? $errors['url'] : ''}</div>
+		<div class="error">{$errors and $errors['url'] ? $errors['url'] : ''}</div>
     </div>
     
+	<div class="field-group">
+        <label for="refRegex">Ref Regex</label>
+        <input id="refRegex" style="max-width: 100px" class="text" type="text" name="refRegex" value="{$config and $config['refRegex'] ? $config['refRegex'] : ''}">
+        <div class="description">Specify a java regex here.  POST requests will only be sent if the ref matches the regex.</div>
+		<div class="error">{$errors and $errors['refRegex'] ? $errors['refRegex'] : ''}</div>
+    </div>
+	
     <div class="field-group">
         <label for="prurl">Pull Request URL</label>
         <input id="prurl" style="max-width: 600px" class="text" type="text" name="prurl" value="{$config and $config['prurl'] ? $config['prurl'] : ''}">
         <div class="description">Specify a URL here.  An http POST request will be sent on pull-requests to the repository.</div>
-		<div class="error">{$errors ? $errors['prurl'] : ''}</div>
+		<div class="error">{$errors and $errors['prurl'] ? $errors['prurl'] : ''}</div>
     </div>
-    
+	
     {call widget.aui.form.checkbox}
-        {param id: 'ignoreSslCerts' /}
-        {param checked: $config['ignoreSslCerts'] /}
-        {param labelHtml: 'Ignore ssl certs.' /}
-        {param description: 'When using secured hypertext transfer protocol, should invalid ssl certifications be allowed?' /}
+        {param id: 'requireSslCerts' /}
+        {param checked: $config['requireSslCerts'] /}
+        {param labelContent: 'Require ssl certs.' /}
+        {param description: 'When using secured hypertext transfer protocol, should a valid ssl certifications be required?' /}
     {/call}
     
     {call widget.aui.form.checkbox}
         {param id: 'checkFromRefChanged' /}
         {param checked: $config['checkFromRefChanged'] /}
-        {param labelHtml: 'Check from-ref change exists on pull-requests.' /}
+        {param labelContent: 'Check from-ref change exists on pull-requests.' /}
         {param description: 'Trigger rescoped pull-requests only if the from-ref has changed. Should changes to the to-ref cause the pull-request to get rebuilt?' /}
     {/call}
     
