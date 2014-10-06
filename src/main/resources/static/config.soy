@@ -15,7 +15,7 @@
     
 	<div class="field-group">
         <label for="refRegex">Ref Regex</label>
-        <input id="refRegex" style="max-width: 100px" class="text" type="text" name="refRegex" value="{$config and $config['refRegex'] ? $config['refRegex'] : ''}">
+        <input id="refRegex" style="max-width: 200px" class="text" type="text" name="refRegex" value="{$config and $config['refRegex'] ? $config['refRegex'] : '^refs/heads/.*$'}">
         <div class="description">Specify a java regex here.  POST requests will only be sent if the ref matches the regex.</div>
 		<div class="error">{$errors and $errors['refRegex'] ? $errors['refRegex'] : ''}</div>
     </div>
