@@ -6,9 +6,9 @@ addons:
 install:
 - bundle install --path vendor/bundle
 script:
-- rake --trace
+- bundle exec rake --trace
 after_script:
-- rake after_build --trace
+- bundle exec rake after_build --trace
 deploy:
 - provider: releases
   skip_cleanup: true

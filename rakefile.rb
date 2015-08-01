@@ -63,7 +63,7 @@ end
 
 publish_git_tag :publish_git_tag do |t, args|
   t.git_repository = %x[git config --get remote.origin.url].split('://')[1]
-  t.tag_name = BUILD_VERSION
+  t.tag_name = TravisBuildTools::Build::VERSION
   t.service_user = ENV['GIT_TAG_PUSHER']
 end
 
