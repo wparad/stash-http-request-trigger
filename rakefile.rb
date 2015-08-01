@@ -21,7 +21,7 @@ desc 'Use Atlassian to build'
 desc :build
 
 desc 'Create the package'
-task :package => [:setup, :build, :publish_git_tag]
+task :package => [:setup, :build]
 
 desc 'builds the plugin'
 task :compile
@@ -32,7 +32,7 @@ task :run
 desc 'Creates eclipse project'
 task :project
 
-task :after_build => [:display_repository]
+task :after_build => [:publish_git_tag, :display_repository]
 
 task :clobber => [:clean]
 CLOBBER.include(TARGET_DIR, AMPS_DIR)

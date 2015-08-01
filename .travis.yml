@@ -9,7 +9,7 @@ deploy:
 - provider: releases
   skip_cleanup: true
   file_glob: true
-  file: output/*.nupkg
+  file: target/*.jar
   api_key:
     secure: Lcs/FpkbuK8UtjQ5GUxw7s1Z5JwbCcY5kNsE3+JMYiDsrsX7z6Z1fEk60E9hiqBy8g92013J2SEgl7NX+W0YlBEI78vQMdMC/4N+cbVmVftsGYPV+J7rQaWJ4zSeClhhf5lLsaLPHC2ByyOEojHMu4NqPdw50nBcyNi52xf9V33JvXAfHDo49oG9yU1typgJyOpkmOMmOWjrins1NiC9QP0BuZbGylY/gTa7YqgkjZJX8jQ9QGPcicoY9SQ6HGCz79vNAXDt5LUmter3SkYYS6qVGv+LBkIsfPRardg4wLdJGsNwwSTuSZIeMdZgU3K5zm2Ym9dsX5co11KPXx1nfJl8Zgd9OVxcO5MZcHIaOtN1kgI1JM0ODryOvcWd6Sh/pj+lTUIVM3k4sHz19e8NQ6dHw+wvlD/UqmtoqXgrUxlz+NMoEHIcjKgT7WV6mmijy9rNiW7tRLKCO82kLnlgMveAbtMkTVyy+huK8S8erNMX544LGsHYoGTR5MdMOD4vfjLGLZeKC+4F5J72BZKExsEXSJP1Ip7xae8vjd22mGwBaHaDTPBKuv7XeTtJ1ojquwyrQ8Rj4HdZHzIVWxTjahRUN+H8QAqlMRKi1tBsLjQ/3FBN4TMnUD2Kn3b2GWfVT0rqFZg7VMtxGNf4l5FcBURA5A/TKMjLAwJcj19SN/M=
   on:
