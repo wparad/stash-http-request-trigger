@@ -4,25 +4,26 @@ addons:
     packages:
     - atlassian-plugin-sdk
 install:
-  - bundle install --path vendor/bundle
+- bundle install --path vendor/bundle
 script:
-  - rake --trace
+- rake --trace
 after_script:
-  - rake after_build --trace
+- rake after_build --trace
 deploy:
-  - provider: releases
-    skip_cleanup: true
-    file_glob: true
-    file: output/*.nupkg
-    api_key:
-      secure: WmW8P+7vxPmVUnIbhVkfY4TzjN8bC8uguHc10fQedmSWCzJ7Lq0c6kXKoKAWKPUTmDn9+IyAYyCGXs8rjIs7ZPavd8p3vMDTFl9K72bZhCpnKMLhK2/1zWBijfAbVehK2cTGiSLUSROnvNcpX7zRj7QQWhm+iBg8YJt87gBSkg68vZN9YL+N2nUdHN2txrFKeGiH+nSce2v4jyZD+JKC74oO1rkgLx1gsJ2YEc5ZmqAibI9dsWK+Yr1SqQu/xPnanM3QCno0GKdWvL4IJijllxWTIQ8HvvZjoqXOKPkObaI2evzbvp5kT5q8rAZJ1sqX4m7hyXQcEIb1xcJijv5Topq0hr3dsPgIYMTq40DJuF7qsoAn7/GkTQrPWyv4lnXN2Sfy886iMhkUw70JHArNf4Hs3YbvnYBcntqk5yJ+rlnKRJjUKYsCxQ6/Yc4QM0H8wCgdDRS3fRYHa640DrlDm8SzceViyJzGTbhdskKvUgSbvAJU+YN6VnCvjXwyj0SD1cAIFiO18FZMEHegJ2CSaF8TkEA/6WgVtge5OxHgDBQqDmgAynfWrXyKFRNbJ2K0gjgdybtCxGwo7YpX183HWYxSb2s89bMl9wuXnxIAZ+nocDxpr3AZO8fXFET5Pr7c+2zx7VjeX66t0Wqe3pYM4yCO/FdhToHxJK4k2Of4Jds=
-    on:
-      tags: false
-      all_branches: true
+- provider: releases
+  skip_cleanup: true
+  file_glob: true
+  file: output/*.nupkg
+  api_key:
+    secure: Lcs/FpkbuK8UtjQ5GUxw7s1Z5JwbCcY5kNsE3+JMYiDsrsX7z6Z1fEk60E9hiqBy8g92013J2SEgl7NX+W0YlBEI78vQMdMC/4N+cbVmVftsGYPV+J7rQaWJ4zSeClhhf5lLsaLPHC2ByyOEojHMu4NqPdw50nBcyNi52xf9V33JvXAfHDo49oG9yU1typgJyOpkmOMmOWjrins1NiC9QP0BuZbGylY/gTa7YqgkjZJX8jQ9QGPcicoY9SQ6HGCz79vNAXDt5LUmter3SkYYS6qVGv+LBkIsfPRardg4wLdJGsNwwSTuSZIeMdZgU3K5zm2Ym9dsX5co11KPXx1nfJl8Zgd9OVxcO5MZcHIaOtN1kgI1JM0ODryOvcWd6Sh/pj+lTUIVM3k4sHz19e8NQ6dHw+wvlD/UqmtoqXgrUxlz+NMoEHIcjKgT7WV6mmijy9rNiW7tRLKCO82kLnlgMveAbtMkTVyy+huK8S8erNMX544LGsHYoGTR5MdMOD4vfjLGLZeKC+4F5J72BZKExsEXSJP1Ip7xae8vjd22mGwBaHaDTPBKuv7XeTtJ1ojquwyrQ8Rj4HdZHzIVWxTjahRUN+H8QAqlMRKi1tBsLjQ/3FBN4TMnUD2Kn3b2GWfVT0rqFZg7VMtxGNf4l5FcBURA5A/TKMjLAwJcj19SN/M=
+  on:
+    tags: false
+    all_branches: true
 branches:
   only:
+  - master
   - /^release.*/
 env:
   global:
-  #GIT_TAG_PUSHER
   - secure: YcGPIUFRX8N1xp835zo2RWMmBQXxrVrsqx7vFK8iAhdYYKO0tc2sAYjjxrDuWy7gAbhyW1dnm3I6wQKluNIhmHCFY486BlGR6hwVgNy7eRtmMqGJ2E8be1+sxe2di09H6h/s1+PNqx+snWU/WK5tFVx9PCZmDfeYNJlWgoCU4jAEV+7Wo240aUtbxv6++QSzr3mUMCh3YSTtUqMzScmP7GBTQZVejF2+tB2taGH2rcmc5SCovT3t5eZqoeosgNNHVYQYRsS92ScANX00KxxVzMl61uHKOUS4hvNTB2e9FfFVIjIfZIImjNJ6BMHFVfP6l2TRu3ajlZpTHX/Y8sdUnfgzrc6qniFDAkUNxgKaj3+LUKMABIjxfMxbk7Mp/qyGftj7iGG+7WJuHntu3KJn8afQgwcOvc8Go2pr/xVYNPQskgooUtup9kFkZpiT5xwe4AzyKcUwkwzntlNGLvSlGZuQLeDljtuxEECobblZfAVv5mPWjZYKFYuueouXG9YjqtgV2Tmsdx1FIWRs/ADvowL1OiiszRakoRo/bdN/N8vmSFYUDCrSQl/RwoFZ/jklwZ3ayMQSI4E5YGpSDYdjJPvJCPzv38OtuWN8C+FLHwG73zlXf+fMNnqOCN6UT5CPj2RUWpzPBjmqTugU+/3V8HxyclDuSWy36jFAwDzgxGE=
+  - secure: e/7gw/S6JK+kegBAQ5QyibEpeeuzQHawU9a4Z5SXTJKngTf7J0PM9Q7C3zwHkanJKr8WlIyvuDISaNETDGSYntsMDcqYewPu3QMxYNovTZSvowAYVYUJhcani/p+ljKlP1FnVpZOq0BGQjwFyudFoAO/CKZ0d/5BkSLgCwhp4VTktc0eDojQgtNwabPQDHfvEHc6egpeTyHoih7dmO5DH5fEvWwfHOb9NL2h+J8KaBnO3+a9UFyXB21z3me5K06DAP63phWB3E+5WOw+qEKKV3BKfpH+c5OPNuLnBPNbpLfAfH8oQsOZpt+twZjWXoGfz/AfVhuJioe3V9mBo6xVu9o2hlqK96SKZ3ral+QYikENopPEX1mwqP1oASpDVvZVgLkt/UCT0vzF58YQpq1cv+mEXse4oWfA6udgjyKKZ6rEIzdEPB+GyteswZ2Q7ZOttZV+BxUwYGrEqAcY9Y19F1WJbbTlUdWJt1T0kiNEGKlRp6aznzs5fKcduVPjN+PRDXOlKyr7UGEgVZlUfJy/vLGFFi9jomfH/AN570s/LRCp7RU0xaDtpnkWOmQWz+pShofqv0bN8ATy5kweMuAyy0VOuGytIuNhkSDipyoIB9x8DaW91vWOslGzEVAANMlGZGzcwyxHgwzPf2KuxJpKCA2TX48qapOK50YI3+fDCoM=

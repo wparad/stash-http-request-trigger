@@ -21,7 +21,7 @@ desc 'Use Atlassian to build'
 desc :build
 
 desc 'Create the package'
-task :package => [:setup, :build]
+task :package => [:setup, :build, :publish_git_tag]
 
 desc 'builds the plugin'
 task :compile
@@ -31,6 +31,8 @@ task :run
 
 desc 'Creates eclipse project'
 task :project
+
+task :after_build => [:display_repository]
 
 task :clobber => [:clean]
 CLOBBER.include(TARGET_DIR, AMPS_DIR)
@@ -57,6 +59,16 @@ end
 
 task :build do
   
+end
+
+publish_git_tag :publish_git_tag do |t, args|
+  t.git_repository = %x[git config --get remote.origin.url].split('://')[1]
+  t.tag_name = BUILD_VERSION
+  t.service_user = ENV['GIT_TAG_PUSHER']
+end
+
+task :display_repository do
+  puts Dir.glob(File.join(PWD, '**', '*'), File::FNM_DOTMATCH).select{|f| !f.match(/\/(\.git|vendor|bundle)\//)}
 end
 
 task :compile do
