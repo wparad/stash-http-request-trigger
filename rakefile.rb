@@ -4,6 +4,7 @@ require 'fileutils'
 require 'rake/clean'
 require 'json'
 require 'net/http'
+require 'rest-client'
 require 'travis-build-tools'
 
 #Constants
@@ -37,28 +38,34 @@ task :after_build => [:publish_git_tag, :display_repository]
 task :clobber => [:clean]
 CLOBBER.include(TARGET_DIR, AMPS_DIR)
 
-ATLASSIAN_TOOLS = File.join(PWD, 'atlassian-tools')
-directory ATLASSIAN_TOOLS
-task :setup => [ATLASSIAN_TOOLS] do
+ATLASSIAN_TOOLS_DIR = File.join(PWD, 'atlassian-tools')
+file ATLASSIAN_TOOLS_DIR do
+  FileUtils.mkdir_p(ATLASSIAN_TOOLS_DIR)
   remote_location = 'https://marketplace.atlassian.com/download/plugins/atlassian-plugin-sdk-tgz'
-  local_path = File.join(ATLASSIAN_TOOLS, 'atlassian.tgz')
-  uri = URI(remote_location)
-  Net::HTTP.start(uri.host, uri.port) do |http|
-    request = Net::HTTP::Get.new(uri.request_uri)
-    http.request(request) do |response|
-      fileTotalSize = response["content-length"]
-      open(local_path, 'wb') do |streamFile|
-        response.read_body do |chunk|
-          streamFile.write chunk
-          print ((File.size(streamFile).to_f / fileTotalSize.to_f) * 100).round(2).to_s + " % \r"
-        end
-      end
-    end
+  atlassian_tools = File.join(ATLASSIAN_TOOLS_DIR, 'atlassian.tgz')
+  download_file(atlassian_tools, remote_location)
+  Dir.chdir(ATLASSIAN_TOOLS_DIR) do
+    puts %x[tar -xzvf #{File.basename(atlassian_tools)}]
+  end
+end
+task :setup => [ATLASSIAN_TOOLS_DIR]
+
+def download_file(local_path, remote_location)
+  url = URI::encode(remote_location)
+  begin
+    response = RestClient.get(url)
+
+    FileUtils.mkdir_p(File.dirname(local_path))
+    File.open(local_path, 'wb'){|file| file.write(response.body)}
+  rescue Exception => exception
+    puts "Failed to download #{url}:"
+    raise
   end
 end
 
 task :build do
-  
+  script = Dir[File.join(ATLASSIAN_TOOLS_DIR, "**", 'atlas-package')].first
+  puts %x[#{script}]
 end
 
 publish_git_tag :publish_git_tag do |t, args|
