@@ -1,12 +1,8 @@
 language: java
-addons:
-  apt:
-    packages:
-    - atlassian-plugin-sdk
 install:
 - bundle install --path vendor/bundle
-script:
-- bundle exec rake --trace
+#script:
+#- bundle exec rake --trace
 after_script:
 - bundle exec rake after_build --trace
 deploy:
