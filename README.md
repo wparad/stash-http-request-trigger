@@ -2,6 +2,8 @@
 
 [![Join the chat at https://gitter.im/wparad/stash-http-request-trigger](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/wparad/stash-http-request-trigger?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+[![Build Status](https://travis-ci.org/wparad/stash-http-request-trigger.svg?branch=master)](https://travis-ci.org/wparad/stash-http-request-trigger)
+
 After making commits to Stash, this plugin will make a Http POST request to a specified URL, adding in query parameters for the Source Ref and Source Sha.  This plugin listens to both the main repository and all pull-requests.
 
 ##Background
