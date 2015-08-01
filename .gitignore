@@ -54,3 +54,5 @@ Thumbs.db
 .settings
 target
 *.class
+
+atlassian-tools
