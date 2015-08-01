@@ -3,7 +3,7 @@ install:
 - bundle install --path vendor/bundle
 #script:
 #- bundle exec rake --trace
-after_script:
+before_deploy:
 - bundle exec rake after_build --trace
 deploy:
 - provider: releases
