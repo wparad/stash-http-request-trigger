@@ -34,7 +34,7 @@ task :run
 desc 'Creates eclipse project'
 task :project
 
-task :after_build => [:publish_git_tag, :display_repository]
+task :after_build => [:publish_git_tag, :display_repository, :merge_downstream]
 
 task :clobber => [:clean]
 CLOBBER.include(TARGET_DIR, AMPS_DIR)
@@ -76,14 +76,17 @@ task :fix_pom_version do
   File.write(pom_xml, document.to_s)
 end
 
-publish_git_tag :publish_git_tag do |t, args|
-  t.git_repository = %x[git config --get remote.origin.url].split('://')[1]
-  t.tag_name = TravisBuildTools::Build::VERSION
-  t.service_user = ENV['GIT_TAG_PUSHER']
-end
-
 task :display_repository do
   puts Dir.glob(File.join(PWD, '**', '*'), File::FNM_DOTMATCH).select{|f| !f.match(/\/(\.git|vendor|bundle)\//)}
+end
+
+BUILDER = TravisBuildTools::Builder.new(ENV['GIT_TAG_PUSHER'] || ENV['USER'])
+task :publish_git_tag do
+  BUILDER.publish_git_tag(TravisBuildTools::Build::VERSION.to_s)
+end
+
+task :merge_downstream do
+  BUILDER.merge_downstream('release/', 'master')
 end
 
 task :compile do
