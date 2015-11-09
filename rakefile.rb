@@ -5,6 +5,7 @@ require 'rake/clean'
 require 'json'
 require 'net/http'
 require 'rest-client'
+require 'rexml/document'
 require 'travis-build-tools'
 
 #Constants
@@ -63,9 +64,16 @@ def download_file(local_path, remote_location)
   end
 end
 
-task :build do
+task :build => [:fix_pom_version] do
   script = Dir[File.join(ATLASSIAN_TOOLS_DIR, "**", 'atlas-package')].first
   puts %x[#{script}]
+end
+
+task :fix_pom_version do
+  pom_xml = File.join(PWD, 'pom.xml')
+  document = REXML::Document.new(File.new(pom_xml))
+  document.root.elements['version'].text = TravisBuildTools::Build::VERSION.to_s
+  File.write(pom_xml, document.to_s)
 end
 
 publish_git_tag :publish_git_tag do |t, args|
