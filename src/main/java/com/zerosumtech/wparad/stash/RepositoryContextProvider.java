@@ -4,8 +4,8 @@ import java.util.Map;
 
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.web.ContextProvider;
-import com.atlassian.stash.pull.PullRequest;
-import com.atlassian.stash.repository.Repository;
+import com.atlassian.bitbucket.pull.PullRequest;
+import com.atlassian.bitbucket.repository.Repository;
 import com.google.common.collect.ImmutableMap;
 
 public class RepositoryContextProvider implements ContextProvider
@@ -28,7 +28,7 @@ public class RepositoryContextProvider implements ContextProvider
     	String ref = "refs/pull-requests/" + Long.toString(pullRequest.getId());
     	String buildUrl = repositoryInformationService.GetPullRequestUrl(repository,
     			ref,
-    			pullRequest.getFromRef().getLatestChangeset(),
+    			pullRequest.getFromRef().getLatestCommit(),
     			pullRequest.getToRef().getId(),
     			Long.toString(pullRequest.getId()),
     			true);

@@ -3,7 +3,7 @@ import java.util.Map;
 
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.web.Condition;
-import com.atlassian.stash.repository.Repository;
+import com.atlassian.bitbucket.repository.Repository;
 
 public class PluginEnabledCondition implements Condition
 {

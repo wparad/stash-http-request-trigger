@@ -20,7 +20,7 @@
         <context-provider class="com.zerosumtech.wparad.stash.RepositoryContextProvider"/>
         <conditions type="AND">
             <condition class="com.zerosumtech.wparad.stash.PluginEnabledCondition"/>
-            <condition class="com.atlassian.stash.web.conditions.PullRequestInState">
+            <condition class="com.atlassian.bitbucket.web.conditions.PullRequestInState">
                 <param name="state">OPEN</param>
             </condition>
         </conditions>
