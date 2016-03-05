@@ -1,19 +1,19 @@
 package com.zerosumtech.wparad.stash;
 
 import com.atlassian.event.api.EventListener;
-import com.atlassian.stash.event.pull.PullRequestOpenedEvent;
-import com.atlassian.stash.event.pull.PullRequestReopenedEvent;
-import com.atlassian.stash.event.pull.PullRequestRescopedEvent;
-import com.atlassian.stash.event.RepositoryRefsChangedEvent;
-import com.atlassian.stash.hook.repository.AsyncPostReceiveRepositoryHook;
-import com.atlassian.stash.hook.repository.RepositoryHookContext;
-import com.atlassian.stash.pull.PullRequest;
-import com.atlassian.stash.repository.RefChange;
-import com.atlassian.stash.repository.RefChangeType;
-import com.atlassian.stash.repository.Repository;
-import com.atlassian.stash.setting.RepositorySettingsValidator;
-import com.atlassian.stash.setting.Settings;
-import com.atlassian.stash.setting.SettingsValidationErrors;
+import com.atlassian.bitbucket.event.pull.PullRequestOpenedEvent;
+import com.atlassian.bitbucket.event.pull.PullRequestReopenedEvent;
+import com.atlassian.bitbucket.event.pull.PullRequestRescopedEvent;
+import com.atlassian.bitbucket.event.repository.RepositoryRefsChangedEvent;
+import com.atlassian.bitbucket.hook.repository.AsyncPostReceiveRepositoryHook;
+import com.atlassian.bitbucket.hook.repository.RepositoryHookContext;
+import com.atlassian.bitbucket.pull.PullRequest;
+import com.atlassian.bitbucket.repository.RefChange;
+import com.atlassian.bitbucket.repository.RefChangeType;
+import com.atlassian.bitbucket.repository.Repository;
+import com.atlassian.bitbucket.setting.RepositorySettingsValidator;
+import com.atlassian.bitbucket.setting.Settings;
+import com.atlassian.bitbucket.setting.SettingsValidationErrors;
 
 import java.util.Collection;
 import java.util.regex.Pattern;
@@ -56,7 +56,7 @@ public class PostReceiveHook implements AsyncPostReceiveRepositoryHook, Reposito
 	{
     	boolean checkFromRefChanged = repositoryInformationService.CheckFromRefChanged(event.getPullRequest().getToRef().getRepository());
     	String previousHash = event.getPreviousFromHash();
-    	String newHash = event.getPullRequest().getFromRef().getLatestChangeset();
+    	String newHash = event.getPullRequest().getFromRef().getLatestCommit();
 		if(!checkFromRefChanged || previousHash == null || newHash == null || !previousHash.equals(newHash))
 		{
 			HandlePullRequestEvent(event.getPullRequest());
@@ -70,7 +70,7 @@ public class PostReceiveHook implements AsyncPostReceiveRepositoryHook, Reposito
 		
 		repositoryInformationService.PostChange(repository,
 				ref,
-				pullRequest.getFromRef().getLatestChangeset(),
+				pullRequest.getFromRef().getLatestCommit(),
 				pullRequest.getToRef().getId(),
 				Long.toString(pullRequest.getId()));
     }

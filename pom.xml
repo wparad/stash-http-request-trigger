@@ -55,9 +55,9 @@
    <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.atlassian.stash</groupId>
-                <artifactId>stash-parent</artifactId>
-                <version>${stash.version}</version>
+                <groupId>com.atlassian.bitbucket.server</groupId>
+                <artifactId>bitbucket-parent</artifactId>
+                <version>${bitbucket.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -66,13 +66,18 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.atlassian.stash</groupId>
-            <artifactId>stash-api</artifactId>
+            <groupId>com.atlassian.bitbucket.server</groupId>
+            <artifactId>bitbucket-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.stash</groupId>
-            <artifactId>stash-spi</artifactId>
+            <groupId>com.atlassian.bitbucket.server</groupId>
+            <artifactId>bitbucket-spi</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.bitbucket.server</groupId>
+            <artifactId>bitbucket-page-objects</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -96,12 +101,6 @@
             <artifactId>atlassian-plugins-webfragment</artifactId>
 	    <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>com.atlassian.stash</groupId>
-            <artifactId>stash-rest-common</artifactId>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 	
 	<build>
@@ -121,16 +120,16 @@
 			</plugin>
 			<plugin>
 				<groupId>com.atlassian.maven.plugins</groupId>
-				<artifactId>maven-stash-plugin</artifactId>
+				<artifactId>bitbucket-maven-plugin</artifactId>
 				<version>${amps.version}</version>
 				<extensions>true</extensions>
 				<configuration>
 					<products>
 						<product>
-							<id>stash</id>
-							<instanceId>stash</instanceId>
-							<version>${stash.version}</version>
-							<dataVersion>${stash.data.version}</dataVersion>
+							<id>bitbucket</id>
+							<instanceId>bitbucket</instanceId>
+							<version>${bitbucket.version}</version>
+							<dataVersion>${bitbucket.data.version}</dataVersion>
 						</product>
 					</products>
 				</configuration>
@@ -158,7 +157,7 @@
 								<pluginExecution>
 									<pluginExecutionFilter>
 										<groupId>com.atlassian.maven.plugins</groupId>
-										<artifactId>maven-stash-plugin</artifactId>
+										<artifactId>bitbucket-maven-plugin</artifactId>
 										<versionRange>[4.1.7,)</versionRange>
 										<goals>
 											<goal>filter-plugin-descriptor</goal>
@@ -184,9 +183,10 @@
 	</build>
 
     <properties>
-        <stash.version>2.5.0</stash.version>
-	<stash.data.version>2.3.0</stash.data.version>
-        <amps.version>5.0.2</amps.version>
+        <bitbucket.version>4.3.2</bitbucket.version>
+        <bitbucket.data.version>4.3.2</bitbucket.data.version>
+        <amps.version>6.2.1</amps.version>
+        <plugin.testrunner.version>1.2.3</plugin.testrunner.version>
     </properties>
 
 </project>

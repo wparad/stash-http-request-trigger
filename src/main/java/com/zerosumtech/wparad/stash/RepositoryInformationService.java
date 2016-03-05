@@ -15,14 +15,14 @@ import javax.net.ssl.TrustManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.atlassian.stash.hook.repository.RepositoryHook;
-import com.atlassian.stash.hook.repository.RepositoryHookService;
-import com.atlassian.stash.repository.Repository;
-import com.atlassian.stash.setting.Settings;
-import com.atlassian.stash.user.Permission;
-import com.atlassian.stash.user.PermissionValidationService;
-import com.atlassian.stash.user.SecurityService;
-import com.atlassian.stash.util.Operation;
+import com.atlassian.bitbucket.hook.repository.RepositoryHook;
+import com.atlassian.bitbucket.hook.repository.RepositoryHookService;
+import com.atlassian.bitbucket.repository.Repository;
+import com.atlassian.bitbucket.setting.Settings;
+import com.atlassian.bitbucket.permission.Permission;
+import com.atlassian.bitbucket.permission.PermissionValidationService;
+import com.atlassian.bitbucket.user.SecurityService;
+import com.atlassian.bitbucket.util.Operation;
 
 public class RepositoryInformationService 
 {
@@ -47,7 +47,7 @@ public class RepositoryInformationService
 		permissionValidationService.validateForRepository(repository, Permission.REPO_READ);
 		try 
 		{
-			return securityService.doWithPermission("Retrieving repository hook", Permission.REPO_ADMIN, new Operation<Boolean, Exception>()
+			return securityService.withPermission(Permission.REPO_ADMIN, "Retrieving repository hook").call(new Operation<Boolean, Exception>()
 			{
 				@Override
 				public Boolean perform() throws Exception 
@@ -69,7 +69,7 @@ public class RepositoryInformationService
 		permissionValidationService.validateForRepository(repository, Permission.REPO_READ);
 		try 
 		{
-			return securityService.doWithPermission("Retrieving settings", Permission.REPO_ADMIN, new Operation<Settings, Exception>()
+			return securityService.withPermission(Permission.REPO_ADMIN, "Retrieving settings").call(new Operation<Settings, Exception>()
 			{
 				@Override
 				public Settings perform() throws Exception { return repositoryHookService.getSettings(repository, Constants.PLUGIN_KEY); } 
