@@ -4,6 +4,8 @@
 
 [![Build Status](https://travis-ci.org/wparad/stash-http-request-trigger.svg?branch=master)](https://travis-ci.org/wparad/stash-http-request-trigger)
 
+[Changelog](./CHANGELOG.md)
+
 After making commits to Stash, this plugin will make a Http POST request to a specified URL, adding in query parameters for the Source Ref and Source Sha.  This plugin listens to both the main repository and all pull-requests.
 
 ##Background
