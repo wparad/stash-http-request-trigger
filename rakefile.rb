@@ -66,7 +66,7 @@ end
 
 task :build => [:fix_pom_version] do
   script = Dir[File.join(ATLASSIAN_TOOLS_DIR, "**", 'atlas-package')].first
-  puts %x[#{script}]
+  raise 'Failed to build plugin.' if !system(script)
 end
 
 task :fix_pom_version do
