@@ -40,9 +40,13 @@ Once installed, follow these steps:
 * STASH_PROJECT - Project key of Stash project
 
 ##Development
-Run `bundle exec rake --trace` this will download the atlassian tools needed to build the plugin.
+Setup Atlassian BitBucket following the [SDK instructions](https://developer.atlassian.com/docs/getting-started/set-up-the-atlassian-plugin-sdk-and-build-a-project/install-the-atlassian-sdk-on-a-linux-or-mac-system).
+
+* `bundle install`
+* `bundle exec rake --trace` this will download the atlassian tools needed to build the plugin.
 
 ### Testing
 Run `bundle exec rake compile run --trace` to set up and run an instance of bitbucket locally to test the plugin.
+
 ### Common Issues
 * Stash default login is admin/admin
