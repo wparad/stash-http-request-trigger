@@ -124,6 +124,7 @@
 				<version>${amps.version}</version>
 				<extensions>true</extensions>
 				<configuration>
+					<allowGoogleTracking>false</allowGoogleTracking>
 					<products>
 						<product>
 							<id>bitbucket</id>
