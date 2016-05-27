@@ -12,11 +12,11 @@
             <directory location="/static/"/>
         </config-form>
     </repository-hook>
-    
+
     <component key="repositoryInformationService" name="Repository Information Service"
                class="com.zerosumtech.wparad.stash.RepositoryInformationService"/>
-    
-    <web-item key="stash.pull-request.build-trigger" name="Trigger Build" weight="50" section="stash.pull-request.toolbar.actions">
+
+    <web-item key="stash.pull-request.build-trigger" name="Trigger Build" weight="50" section="bitbucket.pull-request.toolbar.actions">
         <context-provider class="com.zerosumtech.wparad.stash.RepositoryContextProvider"/>
         <conditions type="AND">
             <condition class="com.zerosumtech.wparad.stash.PluginEnabledCondition"/>
@@ -28,10 +28,10 @@
 		<styleClass>triggerBuild</styleClass>
         <dependency>${project.groupId}-${project.artifactId}:pull-request-build-button</dependency>
     </web-item>
-    
+
     <web-resource key="pull-request-build-button">
         <resource type="download" name="pull-request-build-button.js" location="/static/pull-request-build-button.js" />
-        <context>stash.page.pullRequest.view</context>
+        <context>bitbucket.page.pullRequest.view</context>
     </web-resource>
-    
+
 </atlassian-plugin>
