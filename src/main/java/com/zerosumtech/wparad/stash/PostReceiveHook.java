@@ -66,7 +66,7 @@ public class PostReceiveHook implements AsyncPostReceiveRepositoryHook, Reposito
     private void HandlePullRequestEvent(PullRequest pullRequest)
     {
     	Repository repository = pullRequest.getToRef().getRepository();
-    	String ref = "refs/pull-requests/" + Long.toString(pullRequest.getId());
+    	String ref = "refs/pull-requests/" + Long.toString(pullRequest.getId()) + "/from";
 		
 		repositoryInformationService.PostChange(repository,
 				ref,
