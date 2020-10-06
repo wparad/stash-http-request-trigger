@@ -3,7 +3,8 @@ GEM
   specs:
     domain_name (0.5.24)
       unf (>= 0.0.5, < 1.0.0)
-    ffi (1.9.10-x86-mingw32)
+    ffi (1.13.1)
+    ffi (1.13.1-x86-mingw32)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
     mime-types (2.6.1)
